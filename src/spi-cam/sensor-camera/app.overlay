@@ -1,0 +1,24 @@
+#include <zephyr/dt-bindings/gpio/arduino-header-r3.h>
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+	chosen {
+		zephyr,camera = &arducam_mega;
+	};
+};
+
+&arduino_spi {
+	status = "okay";
+	/* Override to use physical pin configuration for JSPI / ICSP connector */
+	pinctrl-0 = <&spi2_sck_pd1 &spi2_miso_pc2 &spi2_mosi_pc3>;
+	pinctrl-names = "default";
+
+	cs-gpios = <&arduino_header ARDUINO_HEADER_R3_D10 GPIO_ACTIVE_LOW>;
+
+	arducam_mega: arducam_mega@0 {
+		compatible = "arducam,mega";
+		reg = <0>;
+		spi-max-frequency = <8000000>;
+		status = "okay";
+	};
+};

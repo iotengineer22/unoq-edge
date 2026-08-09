@@ -1,0 +1,6 @@
+name: Copy of Detect Objects on Camera
+description: This example showcases object detection within a live feed from a USB camera.
+ports: []
+bricks:
+- arduino:web_ui: {}
+icon: 📽️

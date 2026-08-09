@@ -1,0 +1,10 @@
+name: Copy of Detect Objects on Camera_ori
+description: This example showcases object detection within a live feed from a USB camera.
+ports: []
+bricks:
+- arduino:video_object_detection:
+    variables:
+      EI_OBJ_DETECTION_MODEL: /home/arduino/.arduino-bricks/ei-models/camera-test-linux-aarch64-v4-impulse-#1.eim
+      EI_V_OBJ_DETECTION_MODEL: /home/arduino/.arduino-bricks/ei-models/camera-test-linux-aarch64-v4-impulse-#1.eim
+- arduino:web_ui: {}
+icon: 📽️

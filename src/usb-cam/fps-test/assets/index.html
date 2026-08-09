@@ -1,0 +1,120 @@
+<!--
+SPDX-FileCopyrightText: Copyright (C) Arduino s.r.l. and/or its affiliated companies
+
+SPDX-License-Identifier: MPL-2.0
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USB Camera Live Stream</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div>
+        <div class="header">
+            <h1 class="arduino-text">USB Camera Live Stream</h1>
+            <img class="arduino-logo" src="./img/logo.svg" alt="Arduino Logo">
+        </div>
+
+        <div class="main-content">
+            <div class="container" id="video-container" style="max-width: 1080px;">
+                <div id="videoFeedContainer">
+                    <div id="videoPlaceholder" class="camera-status">
+                        <img src="./img/no-face.svg" alt="Searching webcam">
+                        <p class="feedback-text">Searching Webcam...</p>
+                    </div>
+                    <img id="videoStream" title="Video stream" width="100%" height="auto" style="display: none; border-radius: 8px; max-width: 1024px;">
+                    <div id="fpsBadge" class="fps-badge">
+                        Camera: <span id="fpsValue">--</span> FPS (<span id="resolutionValue">--x--</span>)
+                    </div>
+                </div>
+
+                <!-- Capture Control Buttons -->
+                <div class="controls-section" style="display: flex; gap: 16px; margin-top: 24px; justify-content: center; align-items: center;">
+                    <button id="startSaveBtn" style="background-color: #28a745; color: white; border: none; padding: 12px 28px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; transition: opacity 0.2s, background-color 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        Start Saving
+                    </button>
+                    <button id="stopSaveBtn" style="background-color: #dc3545; color: white; border: none; padding: 12px 28px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; transition: opacity 0.2s, background-color 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); opacity: 0.5;" disabled>
+                        Stop Saving
+                    </button>
+                </div>
+                <div id="saveStatus" style="text-align: center; margin-top: 14px; font-weight: 600; color: #6c757d; font-family: sans-serif; font-size: 14px;">
+                    Status: Idle
+                </div>
+
+            </div>
+        </div>
+        <div id="error-container" class="error-message" style="display: none;"></div>
+    </div>
+
+    <script>
+        const videoStream = document.getElementById('videoStream');
+        const placeholder = document.getElementById('videoPlaceholder');
+        const currentHostname = window.location.hostname;
+        const targetPort = window.location.port || '7000';
+        const targetPath = '/video_feed';
+        const streamUrl = `http://${currentHostname}:${targetPort}${targetPath}`;
+
+        videoStream.onload = () => {
+            placeholder.style.display = 'none';
+            videoStream.style.display = 'block';
+            const fpsBadge = document.getElementById('fpsBadge');
+            if (fpsBadge) {
+                fpsBadge.style.display = 'block';
+            }
+        };
+
+        // Start MJPEG stream directly
+        videoStream.src = streamUrl;
+    </script>
+
+    <script src="libs/socket.io.min.js"></script>
+    <script src="app.js"></script>
+
+    <script>
+        // Save capture Socket.IO controls
+        const startSaveBtn = document.getElementById('startSaveBtn');
+        const stopSaveBtn = document.getElementById('stopSaveBtn');
+        const saveStatus = document.getElementById('saveStatus');
+
+        startSaveBtn.addEventListener('click', () => {
+            socket.emit('start_save', {});
+            updateSavingUI(true);
+        });
+
+        stopSaveBtn.addEventListener('click', () => {
+            socket.emit('stop_save', {});
+            updateSavingUI(false);
+        });
+
+        socket.on('save_status', (data) => {
+            if (data && typeof data.is_saving !== 'undefined') {
+                updateSavingUI(data.is_saving);
+            }
+        });
+
+        function updateSavingUI(isSaving) {
+            if (isSaving) {
+                startSaveBtn.disabled = true;
+                startSaveBtn.style.opacity = 0.5;
+                stopSaveBtn.disabled = false;
+                stopSaveBtn.style.opacity = 1;
+                saveStatus.textContent = 'Status: Saving Images...';
+                saveStatus.style.color = '#28a745';
+            } else {
+                startSaveBtn.disabled = false;
+                startSaveBtn.style.opacity = 1;
+                stopSaveBtn.disabled = true;
+                stopSaveBtn.style.opacity = 0.5;
+                saveStatus.textContent = 'Status: Idle';
+                saveStatus.style.color = '#6c757d';
+            }
+        }
+    </script>
+
+</body>
+</html>
+

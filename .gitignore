@@ -1,0 +1,18 @@
+# Edge Impulse SDK and Models (Excluded due to licensing/size)
+**/edge-impulse-sdk/
+**/model-parameters/
+**/tflite-model/
+*.eim
+
+# Build folders and binaries
+**/build/
+**/bin/
+**/obj/
+.ninja_*
+
+# OS / Editor temporary files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
