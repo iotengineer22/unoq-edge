@@ -36,37 +36,7 @@ The system leverages the unique dual-architecture of the **Arduino® UNO Q** (co
 
 ### Overall Hardware Block Diagram
 
-```mermaid
-graph TD
-    classDef mcu fill:#dbeafe,stroke:#1e40af,stroke-width:2px;
-    classDef cpu fill:#fef08a,stroke:#854d0e,stroke-width:2px;
-    classDef peripheral fill:#f3f4f6,stroke:#4b5563,stroke-width:1.5px;
-    classDef power fill:#fee2e2,stroke:#ef4444,stroke-width:1.5px;
 
-    subgraph UNOQ ["Arduino® UNO Q Core"]
-        Host["Qualcomm Linux Host<br>(Qualcomm QRB2210 CPU)"]:::cpu
-        MCU["STM32U585 MCU<br>(Zephyr RTOS)"]:::mcu
-    end
-
-    MIPI["MIPI-CSI2 Camera<br>(Sony IMX219)"]:::peripheral
-    Addon["Custom MIPI-CSI2<br>Add-on Board"]:::peripheral
-    USB["USB Web Camera<br>(ELP 5-50mm)"]:::peripheral
-    SPI["SPI Macro Camera<br>(Arducam Mega)"]:::peripheral
-    PIR["PIR Motion Sensor<br>(GPIO Trigger)"]:::peripheral
-    LED["RGB Status LEDs<br>(GPIO Output)"]:::peripheral
-    Hub["USB-C Hub<br>(Anker 332)"]:::peripheral
-    Power["External Power Supply<br>(5V DC Input)"]:::power
-
-    Host -->|MIPI-CSI2 Bus| Addon
-    Addon -->|Flat Flex Cable| MIPI
-    Host -->|USB Host Bus| Hub
-    Power -->|External Power Line| Hub
-    Hub -->|USB Connection & Power| USB
-    MCU -->|SPI2 Bus & CS PB9| SPI
-    MCU <--|GPIO D7 PB2 Interrupt| PIR
-    MCU -->|GPIO Status Channels| LED
-    Host <-->|Internal SWD / RAM Dump| MCU
-```
 
 ![Overall Hardware Block Diagram](./img/unoq_block_diagram.jpg)
 
