@@ -42,15 +42,48 @@ The system leverages the unique dual-architecture of the **Arduino® UNO Q** (co
 
 ### Hardware Components & Photos
 
-| Component Name | Photo | Description |
-| :--- | :---: | :--- |
-| **Core Unit**: [Arduino® UNO Q](https://store.arduino.cc/products/uno-q) (4GB RAM) | ![UNO Q](./img/unoq.jpg) | High-performance dual-core host processing unit running Qualcomm Linux and STM32 RTOS. |
-| **Overhead Camera (MIPI-CSI2)**: Raspberry Pi Camera v2 (Sony IMX219) | ![MIPI Camera](./img/mipi_cam.jpg) | Overhead high-resolution Full HD scanning camera for board inspection. |
-| **Custom MIPI-CSI2 Add-on Board** | ![MIPI Add-on 1](./img/add-on%20%281%29.jpg) <br> ![MIPI Add-on 2](./img/add-on%20%282%29.jpg) | Interface board connecting the MIPI camera to the Arduino UNO Q (Referenced from the [camboard-uno-q](https://github.com/RevLmt/camboard-uno-q) design). |
-| **Side/Flexible Camera (USB)**: ELP-USBFHD08s-MFV(5-50) USB Web Camera | ![USB Camera](./img/usb_cam.jpg) | High-speed continuous inspection camera for fast sequential frame capture. |
-| **USB-C Hub**: Anker 332 USB-C Hub | ![USB-C Hub](./img/typec_hub.jpg) | Externally powered USB-C hub providing stable power supply and connection to the USB camera. |
-| **Macro Camera (SPI)**: Arducam Mega 3MP SPI Camera | ![SPI Camera](./img/spi_cam.jpg) | Macro inspection camera connected via JSPI/ICSP header on the MCU. |
-| **Trigger Sensor**: External PIR motion sensor | ![PIR Sensor](./img/trigger_sensor.jpg) | PIR sensor connected to GPIO D7 (`PB2`) for event-driven capture triggers. |
+### **Core Unit: [Arduino® UNO Q](https://store.arduino.cc/products/uno-q) (4GB RAM)**
+
+![UNO Q](./img/unoq.jpg)
+
+High-performance dual-core host processing unit running Qualcomm Linux and STM32 RTOS.
+
+### **Overhead Camera (MIPI-CSI2): Raspberry Pi Camera v2 (Sony IMX219)**
+
+![MIPI Camera](./img/mipi_cam.jpg)
+
+Overhead high-resolution Full HD scanning camera for board inspection.
+
+### **Custom MIPI-CSI2 Add-on Board**
+
+![MIPI Add-on 1](./img/add-on%20%281%29.jpg) <br> ![MIPI Add-on 2](./img/add-on%20%282%29.jpg)
+
+Interface board connecting the MIPI camera to the Arduino UNO Q (Referenced from the [camboard-uno-q](https://github.com/RevLmt/camboard-uno-q) design).
+
+### **Side/Flexible Camera (USB): ELP-USBFHD08s-MFV(5-50) USB Web Camera**
+
+![USB Camera](./img/usb_cam.jpg)
+
+High-speed continuous inspection camera for fast sequential frame capture.
+
+### **USB-C Hub: Anker 332 USB-C Hub**
+
+![USB-C Hub](./img/typec_hub.jpg)
+
+Externally powered USB-C hub providing stable power supply and connection to the USB camera.
+
+### **Macro Camera (SPI): Arducam Mega 3MP SPI Camera**
+
+![SPI Camera](./img/spi_cam.jpg)
+
+Macro inspection camera connected via JSPI/ICSP header on the MCU.
+
+### **Trigger Sensor: External PIR motion sensor**
+
+![PIR Sensor](./img/trigger_sensor.jpg)
+
+PIR sensor connected to GPIO D7 (`PB2`) for event-driven capture triggers.
+
 
 
 
@@ -60,23 +93,21 @@ Connect the Arducam Mega 3MP and the PIR sensor to the Arduino Uno Q as follows:
 
 ![SPI Hardware Connection Diagram](./img/spi-hard.png)
 
-| Component Pin | Arduino Uno Q Pin | Connection Type / Target Port | Description |
-| :--- | :--- | :--- | :--- |
-| **Arducam VCC** | **5V** (or 3.3V) | Power | Camera module power |
-| **Arducam GND** | **GND** | Ground | Ground reference |
-| **Arducam MOSI** | **MOSI (JSPI)** | `PC3` (SPI2_MOSI on ICSP) | SPI Master Out Slave In |
-| **Arducam MISO** | **MISO (JSPI)** | `PC2` (SPI2_MISO on ICSP) | SPI Master In Slave Out |
-| **Arducam SCK** | **SCK (JSPI)** | `PD1` (SPI2_SCK on ICSP) | SPI Serial Clock |
-| **Arducam CS** | **D10** | `PB9` (GPIO Control) | Chip Select active-low control |
-| **PIR VCC** | **3.3V** (or 5V) | Power | PIR Sensor power |
-| **PIR GND** | **GND** | Ground | Ground reference |
-| **PIR OUT** | **D7** | `PB2` (Interrupt Input) | Active-Low trigger with internal Pull-up |
+*   **Arducam VCC** connects to **5V (or 3.3V)** (Power) &mdash; Camera module power
+*   **Arducam GND** connects to **GND** (Ground) &mdash; Ground reference
+*   **Arducam MOSI** connects to **MOSI (JSPI)** (`PC3` (SPI2_MOSI on ICSP)) &mdash; SPI Master Out Slave In
+*   **Arducam MISO** connects to **MISO (JSPI)** (`PC2` (SPI2_MISO on ICSP)) &mdash; SPI Master In Slave Out
+*   **Arducam SCK** connects to **SCK (JSPI)** (`PD1` (SPI2_SCK on ICSP)) &mdash; SPI Serial Clock
+*   **Arducam CS** connects to **D10** (`PB9` (GPIO Control)) &mdash; Chip Select active-low control
+*   **PIR VCC** connects to **3.3V (or 5V)** (Power) &mdash; PIR Sensor power
+*   **PIR GND** connects to **GND** (Ground) &mdash; Ground reference
+*   **PIR OUT** connects to **D7** (`PB2` (Interrupt Input)) &mdash; Active-Low trigger with internal Pull-up
 
 ---
 
 ## 4. Software & Firmware Architecture
 
-The codebase is structured logically, splitting responsibilities between the high-performance Qualcomm Linux Host (MIPI and USB camera pipelines) and the low-power STM32U585 MCU (SPI camera pipeline and event-driven trigger loop). All firmware and application folders are located inside the [src/](file:///C:/Users/ioten/zephyrproject/test/unoq-invent-up/src/) directory:
+The codebase is structured logically, splitting responsibilities between the high-performance Qualcomm Linux Host (MIPI and USB camera pipelines) and the low-power STM32U585 MCU (SPI camera pipeline and event-driven trigger loop). All firmware and application folders are located inside the [src/](src/) directory:
 
 ```text
 src/
@@ -95,7 +126,7 @@ src/
 
 ### 4.1. SPI Camera (STM32U585 Zephyr RTOS)
 The SPI camera firmware runs on the STM32 microcontroller using Zephyr RTOS. It connects to the Arducam Mega 3MP camera and includes:
-*   **connect-test**: Verifies low-level SPI2 bus communication and chip select control (`D10`/`PB9`) between STM32 and the camera. The test program captures 320x240 (QVGA) photos every few seconds into the MCU SRAM frame buffer. By running the [view_image.py](file:///C:/Users/ioten/zephyrproject/test/unoq-invent-up/src/spi-cam/connect-test/view_image.py) script on a PC, developers can extract the raw image buffer from the STM32's RAM via OpenOCD/SWD debug connection and convert it to a local PNG file for verification.
+*   **connect-test**: Verifies low-level SPI2 bus communication and chip select control (`D10`/`PB9`) between STM32 and the camera. The test program captures 320x240 (QVGA) photos every few seconds into the MCU SRAM frame buffer. By running the [view_image.py](src/spi-cam/connect-test/view_image.py) script on a PC, developers can extract the raw image buffer from the STM32's RAM via OpenOCD/SWD debug connection and convert it to a local PNG file for verification.
     ```dts
     &arduino_spi {
         status = "okay";
@@ -203,13 +234,22 @@ The SPI camera firmware runs on the STM32 microcontroller using Zephyr RTOS. It 
 [![Object Detection with Arducam Mega SPI Camera on Arduino UNO Q](https://img.youtube.com/vi/WYfk6TL4Gcw/0.jpg)](https://youtu.be/WYfk6TL4Gcw)
 
 #### SPI Camera Detection Gallery
-| Target: pico | Target: xiao | Target: nrf54l15 |
-| :---: | :---: | :---: |
-| ![pico](./img/unoq-spi1.png) | ![xiao](./img/unoq-spi2.png) | ![nrf54l15](./img/unoq-spi3.png) |
+*   **Target: pico**
+    ![pico](./img/unoq-spi1.png)
 
-| Target: fpc | Active SPI Console Inference Log |
-| :---: | :---: |
-| ![fpc](./img/unoq-spi4.png) | ![console](./img/unoq-spi5.png) |
+*   **Target: xiao**
+    ![xiao](./img/unoq-spi2.png)
+
+*   **Target: nrf54l15**
+    ![nrf54l15](./img/unoq-spi3.png)
+
+
+*   **Target: fpc**
+    ![fpc](./img/unoq-spi4.png)
+
+*   **Active SPI Console Inference Log**
+    ![console](./img/unoq-spi5.png)
+
 
 ### 4.2. USB Camera (Qualcomm Linux Host)
 The USB camera applications run on the Linux Host side (Qualcomm QRB2210), connecting to the ELP-USBFHD08s-MFV(5-50) USB Web Camera. These applications are developed by adapting and extending the official Object Detection template from the Arduino App Lab platform:
@@ -273,13 +313,25 @@ The USB camera applications run on the Linux Host side (Qualcomm QRB2210), conne
 [![Easy Object Detection with USB Camera on Arduino UNO Q](https://img.youtube.com/vi/gSbLFriOPkc/0.jpg)](https://youtu.be/gSbLFriOPkc)
 
 #### USB Camera Detection Gallery
-| USB Component Detection 1 | USB Component Detection 2 | USB Component Detection 3 |
-| :---: | :---: | :---: |
-| ![usb1](./img/unoq-usb1.png) | ![usb2](./img/unoq-usb2.png) | ![usb3](./img/unoq-usb3.png) |
+*   **USB Component Detection 1**
+    ![usb1](./img/unoq-usb1.png)
 
-| USB Component Detection 4 | USB Component Detection 5 | USB Component Detection 6 |
-| :---: | :---: | :---: |
-| ![usb4](./img/unoq-usb4.png) | ![usb5](./img/unoq-usb5.png) | ![usb6](./img/unoq-usb6.png) |
+*   **USB Component Detection 2**
+    ![usb2](./img/unoq-usb2.png)
+
+*   **USB Component Detection 3**
+    ![usb3](./img/unoq-usb3.png)
+
+
+*   **USB Component Detection 4**
+    ![usb4](./img/unoq-usb4.png)
+
+*   **USB Component Detection 5**
+    ![usb5](./img/unoq-usb5.png)
+
+*   **USB Component Detection 6**
+    ![usb6](./img/unoq-usb6.png)
+
 
 ### 4.3. MIPI-CSI2 Camera (Qualcomm Linux Host)
 The MIPI-CSI2 camera subsystem operates on Qualcomm Linux using GStreamer (`libcamerasrc`) for high-performance streaming.
@@ -385,13 +437,25 @@ To operate the IMX219 camera module on the Arduino UNO Q and resolve device tree
 [![High-Resolution Object Detection with MIPI-CSI 2 Camera on Arduino UNO Q](https://img.youtube.com/vi/3DzF_QH86bY/0.jpg)](https://youtu.be/3DzF_QH86bY)
 
 #### MIPI-CSI2 Camera Detection Gallery
-| MIPI Component Detection 1 | MIPI Component Detection 2 | MIPI Component Detection 3 |
-| :---: | :---: | :---: |
-| ![mipi1](./img/unoq-mipi1.png) | ![mipi2](./img/unoq-mipi2.png) | ![mipi3](./img/unoq-mipi3.png) |
+*   **MIPI Component Detection 1**
+    ![mipi1](./img/unoq-mipi1.png)
 
-| MIPI Component Detection 4 | MIPI Component Detection 5 | MIPI Component Detection 6 |
-| :---: | :---: | :---: |
-| ![mipi4](./img/unoq-mipi4.png) | ![mipi5](./img/unoq-mipi5.png) | ![mipi6](./img/unoq-mipi6.png) |
+*   **MIPI Component Detection 2**
+    ![mipi2](./img/unoq-mipi2.png)
+
+*   **MIPI Component Detection 3**
+    ![mipi3](./img/unoq-mipi3.png)
+
+
+*   **MIPI Component Detection 4**
+    ![mipi4](./img/unoq-mipi4.png)
+
+*   **MIPI Component Detection 5**
+    ![mipi5](./img/unoq-mipi5.png)
+
+*   **MIPI Component Detection 6**
+    ![mipi6](./img/unoq-mipi6.png)
+
 
 ### 4.4. Multi Camera (Qualcomm Linux Host)
 The Multi-Camera orchestrator runs `multi-cam.py` to capture live feeds from the MIPI-CSI2 camera, the USB Web camera, and the SPI camera simultaneously. It outputs a synchronized, responsive 3-column layout on port 7000.
@@ -438,13 +502,22 @@ The Multi-Camera orchestrator runs `multi-cam.py` to capture live feeds from the
 [![Multi-Camera PCB & IC Quality Inspection with Arduino UNO Q](https://img.youtube.com/vi/zD2ew1YJBvg/0.jpg)](https://youtu.be/zD2ew1YJBvg)
 
 #### Multi-Camera Dashboard Gallery
-| Triple-Camera Live Dashboard 1 | Triple-Camera Live Dashboard 2 | Triple-Camera Live Dashboard 3 |
-| :---: | :---: | :---: |
-| ![tri1](./img/unoq-tri1.png) | ![tri2](./img/unoq-tri2.png) | ![tri3](./img/unoq-tri3.png) |
+*   **Triple-Camera Live Dashboard 1**
+    ![tri1](./img/unoq-tri1.png)
 
-| Triple-Camera Live Dashboard 4 | Triple-Camera Live Dashboard 5 |
-| :---: | :---: |
-| ![tri4](./img/unoq-tri4.png) | ![tri5](./img/unoq-tri5.png) |
+*   **Triple-Camera Live Dashboard 2**
+    ![tri2](./img/unoq-tri2.png)
+
+*   **Triple-Camera Live Dashboard 3**
+    ![tri3](./img/unoq-tri3.png)
+
+
+*   **Triple-Camera Live Dashboard 4**
+    ![tri4](./img/unoq-tri4.png)
+
+*   **Triple-Camera Live Dashboard 5**
+    ![tri5](./img/unoq-tri5.png)
+
 
 ---
 
@@ -454,9 +527,12 @@ This PCB inspection project uses the Arduino® UNO Q to detect and classify comp
 
 ### System Overview & Inspection Concept Slides
 
-| Slide 1: Concept & Camera Pipeline | Slide 2: Multi-Perspective Inspection Scenes |
-| :---: | :---: |
-| ![Concept Slide](./img/unoq_qa_slide.jpg) | ![Inspection Scenes Slide](./img/unoq_inspection_slide.jpg) |
+*   **Slide 1: Concept & Camera Pipeline**
+    ![Concept Slide](./img/unoq_qa_slide.jpg)
+
+*   **Slide 2: Multi-Perspective Inspection Scenes**
+    ![Inspection Scenes Slide](./img/unoq_inspection_slide.jpg)
+
 
 ![Edge Impulse AI Quality Assurance](./img/edge.png)
 
@@ -467,9 +543,15 @@ This PCB inspection project uses the Arduino® UNO Q to detect and classify comp
     *   **Dataset**: Custom-prepared dataset, consisting of several dozen photos for each of the 4 target PCB types.
     
     ##### SPI Camera Inspection Output
-    | Target: pico | Target: xiao | Target: nrf54l15 |
-    | :---: | :---: | :---: |
-    | ![spi1](./img/spi%20%281%29.png) | ![spi2](./img/spi%20%282%29.png) | ![spi3](./img/spi%20%283%29.png) |
+*   **Target: pico**
+    ![spi1](./img/spi%20%281%29.png)
+
+*   **Target: xiao**
+    ![spi2](./img/spi%20%282%29.png)
+
+*   **Target: nrf54l15**
+    ![spi3](./img/spi%20%283%29.png)
+
     
 *   **High-Speed Continuous Inspection (USB Camera)**:
     For line segments where PCBs pass rapidly and multiple consecutive photographs are required to verify placement in quick succession, the high-speed USB camera (**ELP-USBFHD08s-MFV(5-50)**) is deployed. It captures and streams frames at high frame rates, running the Edge Impulse PCB component detector to identify ICs and Connectors on the fly.
@@ -478,9 +560,15 @@ This PCB inspection project uses the Arduino® UNO Q to detect and classify comp
     *   **Dataset**: Trained on the [Roboflow 100 Printed Circuit Board Dataset](https://universe.roboflow.com/roboflow-100/printed-circuit-board) (while the raw dataset contains a wide variety of micro-component labels, this model was trained specifically to target Connectors and ICs for focused QA verification).
     
     ##### USB Camera Inspection Output
-    | Component Detect 1 | Component Detect 2 | Component Detect 3 |
-    | :---: | :---: | :---: |
-    | ![usb1](./img/usb%20%281%29.png) | ![usb2](./img/usb%20%282%29.png) | ![usb3](./img/usb%20%283%29.png) |
+*   **Component Detect 1**
+    ![usb1](./img/usb%20%281%29.png)
+
+*   **Component Detect 2**
+    ![usb2](./img/usb%20%282%29.png)
+
+*   **Component Detect 3**
+    ![usb3](./img/usb%20%283%29.png)
+
     
 *   **Detailed High-Resolution Scan (MIPI-CSI2 Camera)**:
     For inspection checkpoints requiring maximum detail—such as checking fine-pitch traces, checking part numbers, or reading micro-markings on individual ICs—the high-resolution MIPI-CSI2 camera (IMX219) is utilized. It performs Full HD scans to capture ultra-crisp macro images for deep analysis and precise bounding-box detection.
@@ -489,9 +577,18 @@ This PCB inspection project uses the Arduino® UNO Q to detect and classify comp
     *   **Dataset**: Trained on the [Roboflow 100 Printed Circuit Board Dataset](https://universe.roboflow.com/roboflow-100/printed-circuit-board) (specifically optimized to isolate Connectors and ICs to verify placement on high-resolution scans).
     
     ##### MIPI-CSI2 Camera Inspection Output
-    | Part Detect 1 | Part Detect 2 | Part Detect 3 | Part Detect 4 |
-    | :---: | :---: | :---: | :---: |
-    | ![mipi1](./img/mipi%20%281%29.png) | ![mipi2](./img/mipi%20%282%29.png) | ![mipi3](./img/mipi%20%283%29.png) | ![mipi4](./img/mipi%20%284%29.png) |
+*   **Part Detect 1**
+    ![mipi1](./img/mipi%20%281%29.png)
+
+*   **Part Detect 2**
+    ![mipi2](./img/mipi%20%282%29.png)
+
+*   **Part Detect 3**
+    ![mipi3](./img/mipi%20%283%29.png)
+
+*   **Part Detect 4**
+    ![mipi4](./img/mipi%20%284%29.png)
+
 
 ---
 
