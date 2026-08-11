@@ -553,6 +553,16 @@ Building **The Hybrid Guard** provided key insights into the engineering trade-o
 
 ![Slide 5: Multi-Camera Core-to-Core Frame Transmission](./img/slide_core_transmission.jpg)
 
+### 6. Multi-Interface Power Consumption Profiling
+*   **Insight**: The choice of camera interface and processing load heavily influences the overall system power envelope.
+*   **Measurement**: Profiled current consumption using a USB power checker at 5V:
+    *   **UNO Q Idle (No cameras connected)**: `85 mA` (~0.43 W)
+    *   **SPI Camera Active (STM32 MCU + EI Inference)**: `296 mA` (~1.48 W) &mdash; *Net Increase: `211 mA`*
+    *   **MIPI-CSI2 Camera Active (Qualcomm MPU + YOLO-Pro)**: `491 mA` (~2.46 W) &mdash; *Net Increase: `406 mA`*
+    *   **USB Camera Active (Qualcomm MPU + YOLO-Pro)**: `730 mA` (~3.65 W) &mdash; *Net Increase: `645 mA`*
+    *   **Triple Camera Simultaneous Operation (Streaming without AI)**: `913 mA` (~4.57 W) &mdash; *Net Increase: `828 mA`*
+*   **Takeaway**: MIPI-CSI2 is **37% more power-efficient** than USB under active camera operation (saving ~1.2 W). This efficiency stems from the direct mobile bus design which bypasses the USB host transceiver hardware stack and runs low-overhead DMA image transfer. Additionally, triple-camera concurrent streaming draws only `913 mA` (well below the `1,262 mA` sum of parts) because heavy AI model calculations are bypassed during raw streaming, validating the viability of multi-perspective edge vision under a tight 5W power limit.
+
 ---
 
 ## 7. Conclusion
